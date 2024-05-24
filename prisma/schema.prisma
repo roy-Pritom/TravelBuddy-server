@@ -96,6 +96,9 @@ model Profile {
   user      User @relation(fields: [userId],references: [id])
   bio       String?
   age       Int
+  profilePhoto String?
+  location String?
+  profileDescription String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

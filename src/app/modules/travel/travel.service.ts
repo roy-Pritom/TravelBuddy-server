@@ -49,6 +49,16 @@ const getTravelBuddiesByTripId = async (tripId: string) => {
 
 }
 
+
+// Get travel request by user
+const getTravelBuddyRequestsByUser=async(id:string)=>{
+const result=await prisma.travelBuddyRequest.findMany({
+    where:{
+        senderId:id
+    }
+});
+return result;
+}
 //  Respond to Travel Buddy Request
 const responseToBuddyRequest = async (payload: { status: TravelStatus }, buddyId: string, userId: string) => {
     // check user is exist or not
@@ -83,5 +93,6 @@ const responseToBuddyRequest = async (payload: { status: TravelStatus }, buddyId
 export const TravelServices = {
     sendTravelBuddyRequestInToDb,
     getTravelBuddiesByTripId,
-    responseToBuddyRequest
+    responseToBuddyRequest,
+    getTravelBuddyRequestsByUser
 }

@@ -129,11 +129,17 @@ const updateUserProfileInToDb = async (payload: Partial<TUpdateUser>, userId: st
         },
         data: {
             bio: payload?.bio,
-            age: payload?.age
+            age: payload?.age,
+            location: payload?.location,
+            profilePhoto: payload?.profilePhoto,
+            profileDescription:payload?.profileDescription
         },
         select: {
             bio: true,
-            age: true
+            age: true,
+            location: true,
+            profilePhoto: true,
+            profileDescription: true,
         }
     })
     const result = {
