@@ -42,10 +42,23 @@ const responseToBuddyRequest = catchAsync(async (req: Request, res: Response) =>
     })
 })
 
+// get request history
+const getTravelBuddyRequestsByUser = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.user;
+    const result = await TravelServices.getTravelBuddyRequestsByUser(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Travel buddy request fetch successfully",
+        data: result
+    })
+})
+
 
 export const TravelControllers = {
     sendTravelBuddyRequest,
     getTravelBuddiesByTripId,
-    responseToBuddyRequest
+    responseToBuddyRequest,
+    getTravelBuddyRequestsByUser
 
 }
