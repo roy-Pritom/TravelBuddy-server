@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// user model
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      UserRole @default(USER)
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  trips     Trip[]
+  buddyRequestsReceived TravelBuddyRequest[] @relation("userReceived")
+  buddyRequestsSent TravelBuddyRequest[]     @relation("userSent")
+  profile   Profile?
+  admin     Admin?
+}
+
+
+// Admin model
+model Admin {
+  id  String @id @default(uuid())
+  email String @unique
+  user User @relation(references: [email],fields: [email])
+  name  String
+  // profilePhoto  String?
+  contactNumber String?
+  isDeleted     Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+// Trip model
+model Trip {
+  id          String   @id @default(uuid())
+  userId      String
+  user  User @relation(fields: [userId],references: [id])
+  destination String
+  description  String
+  startDate   String
+  endDate     String
+  travelType   String
+  file      String?
+  budget      Float
+  activities  String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  travelBuddyRequests TravelBuddyRequest[]
+}
+
+// Travel Buddy Request Model:
+
+model TravelBuddyRequest {
+  id        String       @id @default(uuid())
+  tripId    String
+  trip      Trip @relation(fields: [tripId],references: [id])
+  userId    String   @map("recevierId")
+  user      User @relation("userReceived",fields: [userId],references: [id])
+  senderId  String
+  sender    User @relation("userSent",fields: [senderId],references: [id])
+  status    TravelStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+enum TravelStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+// UserProfile Model
+
+model Profile {
+  id        String   @id @default(uuid())
+  userId    String @unique
+  user      User @relation(fields: [userId],references: [id])
+  bio       String?
+  age       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,6 @@
+// const moduleRoutes=[
+//     {
+//         path:'/'
+//         route:
+//     },
+// ]
