@@ -20,6 +20,7 @@ model User {
   email     String   @unique
   role      UserRole @default(USER)
   password  String
+  accountStatus  AccountStatus @default(ACTIVE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   trips     Trip[]
@@ -86,6 +87,10 @@ enum TravelStatus {
 enum UserRole {
   ADMIN
   USER
+}
+enum AccountStatus {
+  ACTIVE
+  DEACTIVE
 }
 
 // UserProfile Model

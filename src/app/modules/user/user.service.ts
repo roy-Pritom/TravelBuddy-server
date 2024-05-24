@@ -152,8 +152,9 @@ const updateUserProfileInToDb = async (payload: Partial<TUpdateUser>, userId: st
 
 const getAllUser=async()=>{
 const result=await prisma.user.findMany({
-    where:{
-        role:UserRole.USER
+   
+    include:{
+        profile:true
     }
 });
 return result;
