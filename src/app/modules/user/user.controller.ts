@@ -52,12 +52,24 @@ const getAllUser=catchAsync(async(req:Request,res:Response)=>{
 // Update User Profile
 const updateUserProfile=catchAsync(async(req:Request,res:Response)=>{
   const {id}=req.user;
-  console.log(req.body);
+  // console.log(req.body);
   const result=await UserServices.updateUserProfileInToDb(req.body,id);
   sendResponse(res,{
     statusCode:httpStatus.OK,
     success:true,
     message:"User profile updated successfully",
+    data:result
+  })
+})
+// Update Account Status
+const updateUserAccountStatus=catchAsync(async(req:Request,res:Response)=>{
+  const {id}=req.params;
+
+  const result=await UserServices.updateUserAccountStatus(id,req.body);
+  sendResponse(res,{
+    statusCode:httpStatus.OK,
+    success:true,
+    message:"Account status updated successfully",
     data:result
   })
 })
@@ -68,5 +80,6 @@ export const UserControllers={
     createAdmin,
     getUserProfile,
     updateUserProfile,
-    getAllUser
+    getAllUser,
+    updateUserAccountStatus
 }

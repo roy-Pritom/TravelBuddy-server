@@ -1,8 +1,10 @@
+import { AccountStatus } from "@prisma/client";
 import config from "../../config";
 import AppError from "../../errors/AppError";
 import { jwtHelpers } from "../../utils/jwtHelpers";
 import prisma from "../../utils/prisma"
 import bcrypt from 'bcrypt';
+import httpStatus from "http-status";
 
 // login
 const login = async (payload: { email: string, password: string }) => {
@@ -13,6 +15,9 @@ const login = async (payload: { email: string, password: string }) => {
     })
     if(!userData){
         throw new AppError(404,"User does not exist!")
+    }
+    if(userData?.accountStatus===AccountStatus.DEACTIVATE){
+        throw new AppError(httpStatus.FORBIDDEN,"Your account is blocked!")
     }
 
     const isPasswordCorrect = await bcrypt.compare(payload.password, userData.password);

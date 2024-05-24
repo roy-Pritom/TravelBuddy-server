@@ -90,7 +90,7 @@ enum UserRole {
 }
 enum AccountStatus {
   ACTIVE
-  DEACTIVE
+  DEACTIVATE
 }
 
 // UserProfile Model

@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { AccountStatus, UserRole } from "@prisma/client";
 import isUserExistById from "../../utils/isUserExistById";
 import prisma from "../../utils/prisma";
 import { TUpdateUser, TUser } from "./user.interface";
@@ -159,6 +159,17 @@ const result=await prisma.user.findMany({
 });
 return result;
 }
+const updateUserAccountStatus=async(id:string,payload:{accountStatus:AccountStatus})=>{
+const result=await prisma.user.update({
+     where:{
+        id,
+     },
+     data:{
+        accountStatus:payload?.accountStatus
+     }
+});
+return result;
+}
 
 
 export const UserServices = {
@@ -166,5 +177,6 @@ export const UserServices = {
     createAdminInToDb,
     getUserProfileFromDb,
     updateUserProfileInToDb,
-    getAllUser
+    getAllUser,
+    updateUserAccountStatus
 }

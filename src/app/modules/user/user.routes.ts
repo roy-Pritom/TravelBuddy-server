@@ -21,5 +21,8 @@ router.get('/users',auth(USER_ROLE.ADMIN,USER_ROLE.USER),UserControllers.getAllU
 // Update User Profile
 router.put('/profile',auth(UserRole.ADMIN,UserRole.USER),validateRequest(userValidationSchemas.updateUserProfileValidationSchema),UserControllers.updateUserProfile);
 
+// update account status
+router.patch('/update-status/:id',auth(UserRole.ADMIN),UserControllers.updateUserAccountStatus);
+
 
 export const UserRoutes=router;
