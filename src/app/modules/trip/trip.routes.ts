@@ -15,5 +15,8 @@ router.get('/trips',TripControllers.getAllTrips)
 // Get  Trips by user
 router.get('/user/trips',auth(UserRole.USER,UserRole.ADMIN),TripControllers.getTripByUser)
 
+// update trip
+router.get('/update-trip/:tripId',auth(UserRole.USER,UserRole.ADMIN),
+validateRequest(TripValidationSchemas.updateTripValidationSchema),TripControllers.updateTrip)
 
 export const TripRoutes=router;

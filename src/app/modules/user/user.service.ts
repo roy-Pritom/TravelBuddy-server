@@ -159,6 +159,7 @@ const result=await prisma.user.findMany({
 });
 return result;
 }
+
 const updateUserAccountStatus=async(id:string,payload:{accountStatus:AccountStatus})=>{
 const result=await prisma.user.update({
      where:{
@@ -166,6 +167,17 @@ const result=await prisma.user.update({
      },
      data:{
         accountStatus:payload?.accountStatus
+     }
+});
+return result;
+}
+const updateUserRoleStatus=async(id:string,payload:{role:'USER' | 'ADMIN'})=>{
+const result=await prisma.user.update({
+     where:{
+        id,
+     },
+     data:{
+        role:payload?.role
      }
 });
 return result;
@@ -178,5 +190,6 @@ export const UserServices = {
     getUserProfileFromDb,
     updateUserProfileInToDb,
     getAllUser,
-    updateUserAccountStatus
+    updateUserAccountStatus,
+    updateUserRoleStatus
 }

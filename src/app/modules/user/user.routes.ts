@@ -23,6 +23,8 @@ router.put('/profile',auth(UserRole.ADMIN,UserRole.USER),validateRequest(userVal
 
 // update account status
 router.patch('/update-status/:id',auth(UserRole.ADMIN),UserControllers.updateUserAccountStatus);
+// update user role
+router.patch('/update-user-role/:id',auth(UserRole.ADMIN),UserControllers.updateUserRoleStatus);
 
 
 export const UserRoutes=router;

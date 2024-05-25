@@ -99,9 +99,24 @@ const getTripByUser = async (id: string) => {
     return result;
 }
 
+
+// update trip
+
+const updateTrip=async(payload:Partial<TTrip>,id:string)=>{
+   const result=await prisma.trip.update({
+    where:{
+        id
+    },
+    data:payload
+   })
+
+   return result;
+}
+
 export const TripServices = {
     createTripInToDb,
     getAllTripsFromDb,
-    getTripByUser
+    getTripByUser,
+    updateTrip
 
 }

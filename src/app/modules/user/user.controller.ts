@@ -73,6 +73,18 @@ const updateUserAccountStatus=catchAsync(async(req:Request,res:Response)=>{
     data:result
   })
 })
+// Update role Status
+const updateUserRoleStatus=catchAsync(async(req:Request,res:Response)=>{
+  const {id}=req.params;
+
+  const result=await UserServices.updateUserRoleStatus(id,req.body);
+  sendResponse(res,{
+    statusCode:httpStatus.OK,
+    success:true,
+    message:"Role updated successfully",
+    data:result
+  })
+})
 
 
 export const UserControllers={
@@ -81,5 +93,6 @@ export const UserControllers={
     getUserProfile,
     updateUserProfile,
     getAllUser,
-    updateUserAccountStatus
+    updateUserAccountStatus,
+    updateUserRoleStatus
 }

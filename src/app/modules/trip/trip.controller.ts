@@ -34,7 +34,7 @@ const getTripByUser = catchAsync(async (req: Request, res: Response) => {
 
 // Get Paginated and Filtered Trips
 const getAllTrips = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.query, ["searchTerm", "destination", "budget","startDate","endDate","minBudget","maxBudget"])
+  const filters = pick(req.query, ["searchTerm", "destination", "budget", "startDate", "endDate", "minBudget", "maxBudget"])
   // for pagination
   const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder'])
   const result = await TripServices.getAllTripsFromDb(filters, options);
@@ -42,8 +42,21 @@ const getAllTrips = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: "Trips retrieved successfully",
-    meta:result.meta,
+    meta: result.meta,
     data: result.data
+  })
+})
+
+
+// update trip
+const updateTrip = catchAsync(async (req: Request, res: Response) => {
+  const { tripId } = req.params;
+  const result = await TripServices.updateTrip(req.body, tripId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Trip updated successfully",
+    data: result
   })
 })
 
@@ -51,5 +64,6 @@ const getAllTrips = catchAsync(async (req: Request, res: Response) => {
 export const TripControllers = {
   createTrip,
   getAllTrips,
-  getTripByUser
+  getTripByUser,
+  updateTrip
 }
