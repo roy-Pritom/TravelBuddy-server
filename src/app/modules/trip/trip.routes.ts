@@ -12,11 +12,13 @@ router.post('/trips',auth(UserRole.USER,UserRole.ADMIN),validateRequest(TripVali
 
 // Get Paginated and Filtered Trips
 router.get('/trips',TripControllers.getAllTrips)
+// Get Trip by id
+router.get('/trip/:tripId',auth(UserRole.ADMIN,UserRole.USER),TripControllers.getTripById)
 // Get  Trips by user
 router.get('/user/trips',auth(UserRole.USER,UserRole.ADMIN),TripControllers.getTripByUser)
 
 // update trip
-router.get('/update-trip/:tripId',auth(UserRole.USER,UserRole.ADMIN),
+router.patch('/update-trip/:tripId',auth(UserRole.USER,UserRole.ADMIN),
 validateRequest(TripValidationSchemas.updateTripValidationSchema),TripControllers.updateTrip)
 
 export const TripRoutes=router;

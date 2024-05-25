@@ -112,11 +112,21 @@ const updateTrip=async(payload:Partial<TTrip>,id:string)=>{
 
    return result;
 }
+const getTripById=async(id:string)=>{
+   const result=await prisma.trip.findUniqueOrThrow({
+    where:{
+        id
+    },
+   })
+
+   return result;
+}
 
 export const TripServices = {
     createTripInToDb,
     getAllTripsFromDb,
     getTripByUser,
-    updateTrip
+    updateTrip,
+    getTripById
 
 }
