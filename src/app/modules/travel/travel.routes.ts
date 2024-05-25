@@ -20,6 +20,9 @@ router.get('/buddy-requests',auth(UserRole.ADMIN),TravelControllers.getAllTravel
 // Get Travel Buddies request For a Specific User
 router.get('/travel-requests',auth(UserRole.ADMIN,UserRole.USER),TravelControllers.getTravelBuddyRequestsByUser)
 
+// getReceiveTravelBuddyRequestsByUser
+router.get('/receive-buddy-requests',auth(UserRole.ADMIN,UserRole.USER),TravelControllers.getReceiveTravelBuddyRequestsByUser)
+
 //  Respond to Travel Buddy Request
 router.put('/travel-buddies/:buddyId/respond',auth(UserRole.ADMIN,UserRole.USER),validateRequest(TravelValidationSchemas.requestResponseValidationSchema), TravelControllers.responseToBuddyRequest)
 

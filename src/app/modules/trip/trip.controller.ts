@@ -82,6 +82,16 @@ const softDeleteTrip = catchAsync(async (req: Request, res: Response) => {
     data: result
   })
 })
+const getDeletedTrips = catchAsync(async (req: Request, res: Response) => {
+
+  const result = await TripServices.getDeletedTrips();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Deleted trips fetch successfully",
+    data: result
+  })
+})
 
 
 export const TripControllers = {
@@ -90,5 +100,6 @@ export const TripControllers = {
   getTripByUser,
   updateTrip,
   getTripById,
-  softDeleteTrip
+  softDeleteTrip,
+  getDeletedTrips
 }

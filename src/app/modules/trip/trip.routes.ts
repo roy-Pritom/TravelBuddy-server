@@ -16,6 +16,8 @@ router.get('/trips',TripControllers.getAllTrips)
 router.get('/trip/:tripId',auth(UserRole.ADMIN,UserRole.USER),TripControllers.getTripById)
 // Get  Trips by user
 router.get('/user/trips',auth(UserRole.USER,UserRole.ADMIN),TripControllers.getTripByUser)
+// deleted  Trips by admin
+router.get('/deleted-trips',auth(UserRole.ADMIN),TripControllers.getDeletedTrips)
 
 // update trip
 router.patch('/update-trip/:tripId',auth(UserRole.USER,UserRole.ADMIN),

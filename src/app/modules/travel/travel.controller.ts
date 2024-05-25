@@ -63,6 +63,17 @@ const getAllTravelRequests = catchAsync(async (req: Request, res: Response) => {
         data: result
     })
 })
+// getReceiveTravelBuddyRequestsByUser
+const getReceiveTravelBuddyRequestsByUser = catchAsync(async (req: Request, res: Response) => {
+    const {id}=req.user;
+    const result = await TravelServices.getReceiveTravelBuddyRequestsByUser(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Receive Travel buddy requests fetch successfully",
+        data: result
+    })
+})
 
 
 export const TravelControllers = {
@@ -70,6 +81,7 @@ export const TravelControllers = {
     getTravelBuddiesByTripId,
     responseToBuddyRequest,
     getTravelBuddyRequestsByUser,
-    getAllTravelRequests
+    getAllTravelRequests,
+    getReceiveTravelBuddyRequestsByUser
 
 }

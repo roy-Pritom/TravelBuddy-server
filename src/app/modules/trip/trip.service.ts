@@ -67,11 +67,19 @@ const getAllTripsFromDb = async (params: TTripFilterRequest, options: TPaginatio
     // check user deleted or not
     andConditions.push({ isDeleted: false })
 
+
     const searchInputs: Prisma.TripWhereInput = { AND: andConditions };
 
 
     const result = await prisma.trip.findMany({
         where: searchInputs,
+        include:{
+          user:{
+            include:{
+                profile:true
+            }
+          }
+        },
         skip: skip,
         take: limit,
         orderBy: {
@@ -171,12 +179,24 @@ const softDeleteTrip = async (id: string) => {
     return result;
 }
 
+
+const getDeletedTrips=async()=>{
+    const result=await prisma.trip.findMany({
+        where:{
+            isDeleted:true
+        }
+    })
+
+    return result;
+}
+
 export const TripServices = {
     createTripInToDb,
     getAllTripsFromDb,
     getTripByUser,
     updateTrip,
     getTripById,
-    softDeleteTrip
+    softDeleteTrip,
+    getDeletedTrips
 
 }

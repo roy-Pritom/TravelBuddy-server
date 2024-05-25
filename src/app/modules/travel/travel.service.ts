@@ -62,6 +62,23 @@ const result=await prisma.travelBuddyRequest.findMany({
 });
 return result;
 }
+// Get receive travel request by user
+const getReceiveTravelBuddyRequestsByUser=async(id:string)=>{
+const result=await prisma.travelBuddyRequest.findMany({
+    where:{
+        userId:id
+    },
+    include:{
+        trip:true,
+        sender:{
+            include:{
+                profile:true
+            }
+        }
+    }
+});
+return result;
+}
 //  Respond to Travel Buddy Request
 const responseToBuddyRequest = async (payload: { status: TravelStatus }, buddyId: string, userId: string) => {
     // check user is exist or not
@@ -103,5 +120,6 @@ export const TravelServices = {
     getTravelBuddiesByTripId,
     responseToBuddyRequest,
     getTravelBuddyRequestsByUser,
-    getAllTravelRequests
+    getAllTravelRequests,
+    getReceiveTravelBuddyRequestsByUser
 }
