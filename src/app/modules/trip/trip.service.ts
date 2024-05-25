@@ -95,7 +95,8 @@ const getAllTripsFromDb = async (params: TTripFilterRequest, options: TPaginatio
 const getTripByUser = async (id: string) => {
     const result = await prisma.trip.findMany({
         where: {
-            userId: id
+            userId: id,
+            isDeleted:false
         }
     })
     return result;
@@ -105,9 +106,16 @@ const getTripByUser = async (id: string) => {
 // update trip
 
 const updateTrip = async (payload: Partial<TTrip>, id: string) => {
+    await prisma.trip.findUniqueOrThrow({
+        where:{
+            id,
+            isDeleted:false
+        }
+    })
     const result = await prisma.trip.update({
         where: {
-            id
+            id,
+            isDeleted:false
         },
         data: payload
     })
@@ -118,7 +126,8 @@ const updateTrip = async (payload: Partial<TTrip>, id: string) => {
 const getTripById = async (id: string) => {
     const result = await prisma.trip.findUniqueOrThrow({
         where: {
-            id
+            id,
+            isDeleted:false
         },
     })
 
