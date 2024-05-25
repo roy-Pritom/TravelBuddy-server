@@ -64,6 +64,8 @@ const getAllTripsFromDb = async (params: TTripFilterRequest, options: TPaginatio
             },
         });
     }
+    // check user deleted or not
+    andConditions.push({ isDeleted: false })
 
     const searchInputs: Prisma.TripWhereInput = { AND: andConditions };
 
@@ -96,7 +98,7 @@ const getTripByUser = async (id: string) => {
     const result = await prisma.trip.findMany({
         where: {
             userId: id,
-            isDeleted:false
+            isDeleted: false
         }
     })
     return result;
@@ -107,15 +109,15 @@ const getTripByUser = async (id: string) => {
 
 const updateTrip = async (payload: Partial<TTrip>, id: string) => {
     await prisma.trip.findUniqueOrThrow({
-        where:{
+        where: {
             id,
-            isDeleted:false
+            isDeleted: false
         }
     })
     const result = await prisma.trip.update({
         where: {
             id,
-            isDeleted:false
+            isDeleted: false
         },
         data: payload
     })
@@ -127,8 +129,15 @@ const getTripById = async (id: string) => {
     const result = await prisma.trip.findUniqueOrThrow({
         where: {
             id,
-            isDeleted:false
+            isDeleted: false
         },
+        include:{
+            user:{
+                include:{
+                    profile:true
+                }
+            }
+        }
     })
 
     return result;

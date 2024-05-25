@@ -93,9 +93,15 @@ const responseToBuddyRequest = async (payload: { status: TravelStatus }, buddyId
     return updatedRequests;
 }
 
+const getAllTravelRequests=async()=>{
+   const result=await prisma.travelBuddyRequest.findMany();
+   return result;
+}
+
 export const TravelServices = {
     sendTravelBuddyRequestInToDb,
     getTravelBuddiesByTripId,
     responseToBuddyRequest,
-    getTravelBuddyRequestsByUser
+    getTravelBuddyRequestsByUser,
+    getAllTravelRequests
 }

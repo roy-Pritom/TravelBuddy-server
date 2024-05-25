@@ -13,6 +13,10 @@ router.post('/trip/:tripId/request', auth(UserRole.ADMIN,UserRole.USER), validat
 
 // Get Potential Travel Buddies For a Specific Trip
 router.get('/travel-buddies/:tripId',auth(UserRole.ADMIN,UserRole.USER),TravelControllers.getTravelBuddiesByTripId)
+
+// getAllTravelRequests
+router.get('/buddy-requests',auth(UserRole.ADMIN),TravelControllers.getAllTravelRequests)
+
 // Get Travel Buddies request For a Specific User
 router.get('/travel-requests',auth(UserRole.ADMIN,UserRole.USER),TravelControllers.getTravelBuddyRequestsByUser)
 
