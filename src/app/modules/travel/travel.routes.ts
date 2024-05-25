@@ -19,5 +19,4 @@ router.get('/travel-requests',auth(UserRole.ADMIN,UserRole.USER),TravelControlle
 //  Respond to Travel Buddy Request
 router.put('/travel-buddies/:buddyId/respond',auth(UserRole.ADMIN,UserRole.USER),validateRequest(TravelValidationSchemas.requestResponseValidationSchema), TravelControllers.responseToBuddyRequest)
 
-
 export const TravelRoutes = router;

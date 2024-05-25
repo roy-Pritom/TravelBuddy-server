@@ -21,4 +21,7 @@ router.get('/user/trips',auth(UserRole.USER,UserRole.ADMIN),TripControllers.getT
 router.patch('/update-trip/:tripId',auth(UserRole.USER,UserRole.ADMIN),
 validateRequest(TripValidationSchemas.updateTripValidationSchema),TripControllers.updateTrip)
 
+// delete trip soft delete
+router.delete('/trip/soft-delete/:tripId',auth(UserRole.ADMIN),TripControllers.softDeleteTrip)
+
 export const TripRoutes=router;

@@ -71,11 +71,24 @@ const getTripById = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+// softDeleteTrip
+const softDeleteTrip = catchAsync(async (req: Request, res: Response) => {
+  const { tripId } = req.params;
+  const result = await TripServices.softDeleteTrip(tripId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Trip deleted successfully",
+    data: result
+  })
+})
+
 
 export const TripControllers = {
   createTrip,
   getAllTrips,
   getTripByUser,
   updateTrip,
-  getTripById
+  getTripById,
+  softDeleteTrip
 }

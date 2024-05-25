@@ -5,6 +5,8 @@ import isUserExistById from "../../utils/isUserExistById";
 import prisma from "../../utils/prisma"
 import { TTrip, TTripFilterRequest } from "./trip.interface";
 import { TPaginationOptions } from "../../interface/pagination";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 // create trip
 const createTripInToDb = async (payload: TTrip, id: string) => {
@@ -102,24 +104,53 @@ const getTripByUser = async (id: string) => {
 
 // update trip
 
-const updateTrip=async(payload:Partial<TTrip>,id:string)=>{
-   const result=await prisma.trip.update({
-    where:{
-        id
-    },
-    data:payload
-   })
+const updateTrip = async (payload: Partial<TTrip>, id: string) => {
+    const result = await prisma.trip.update({
+        where: {
+            id
+        },
+        data: payload
+    })
 
-   return result;
+    return result;
 }
-const getTripById=async(id:string)=>{
-   const result=await prisma.trip.findUniqueOrThrow({
-    where:{
-        id
-    },
-   })
+// get trip by Id
+const getTripById = async (id: string) => {
+    const result = await prisma.trip.findUniqueOrThrow({
+        where: {
+            id
+        },
+    })
 
-   return result;
+    return result;
+}
+
+// delete trip soft delete
+const softDeleteTrip = async (id: string) => {
+    const trip = await prisma.trip.findUnique({
+        where: {
+            id
+        },
+    })
+    if (!trip) {
+        throw new AppError(httpStatus.NOT_FOUND, "Trip does not exist!")
+
+    }
+    if (trip?.isDeleted === true) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Trip already deleted!")
+
+    }
+
+    const result = await prisma.trip.update({
+        where: {
+            id
+        },
+        data: {
+            isDeleted: true
+        }
+    })
+
+    return result;
 }
 
 export const TripServices = {
@@ -127,6 +158,7 @@ export const TripServices = {
     getAllTripsFromDb,
     getTripByUser,
     updateTrip,
-    getTripById
+    getTripById,
+    softDeleteTrip
 
 }
