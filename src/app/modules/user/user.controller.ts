@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { UserServices } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status";
+import { pick } from "../../utils/pick";
 
 // register user
 const createUser=catchAsync(async(req:Request,res:Response)=>{
@@ -39,13 +40,14 @@ const getUserProfile=catchAsync(async(req:Request,res:Response)=>{
 })
 // Get All User 
 const getAllUser=catchAsync(async(req:Request,res:Response)=>{
-
-  const result=await UserServices.getAllUser();
+  const options = pick(req.query, ['page', 'limit'])
+  const result=await UserServices.getAllUser(options);
   sendResponse(res,{
     statusCode:httpStatus.OK,
     success:true,
     message:"Users  retrieved successfully",
-    data:result
+    meta: result.meta,
+    data: result.data
   })
 })
 

@@ -20,15 +20,18 @@ const createTrip = catchAsync(async (req: Request, res: Response) => {
 })
 // get trips by user
 const getTripByUser = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, ["searchTerm"])
   const { id } = req.user;
   // console.log(req.user);
   // console.log(id);
-  const result = await TripServices.getTripByUser(id);
+  const options = pick(req.query, ['page', 'limit'])
+  const result = await TripServices.getTripByUser(id,filters,options);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Trip fetch successfully",
-    data: result
+    meta: result.meta,
+    data: result.data
   })
 })
 
@@ -70,6 +73,17 @@ const getTripById = catchAsync(async (req: Request, res: Response) => {
     data: result
   })
 })
+// getOpenTripById for every user
+const getOpenTripById = catchAsync(async (req: Request, res: Response) => {
+  const { tripId } = req.params;
+  const result = await TripServices.getOpenTripById(tripId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Trip retrieved successfully",
+    data: result
+  })
+})
 
 // softDeleteTrip
 const softDeleteTrip = catchAsync(async (req: Request, res: Response) => {
@@ -101,5 +115,6 @@ export const TripControllers = {
   updateTrip,
   getTripById,
   softDeleteTrip,
-  getDeletedTrips
+  getDeletedTrips,
+  getOpenTripById
 }

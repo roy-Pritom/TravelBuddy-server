@@ -5,7 +5,7 @@ import { jwtHelpers } from "../../utils/jwtHelpers";
 import prisma from "../../utils/prisma"
 import bcrypt from 'bcrypt';
 import httpStatus from "http-status";
-import { JwtPayload } from "jsonwebtoken";
+import { JwtPayload, Secret } from "jsonwebtoken";
 import { TChangePassword } from "./auth.interface";
 import { AuthUtils } from "./auth.utils";
 
@@ -46,6 +46,49 @@ const login = async (payload: { email: string, password: string }) => {
 
 
 }
+
+// refresh token
+const refreshToken = async (token: string) => {
+    //verify token
+    // invalid token - synchronous
+    let verifiedToken = null;
+    try {
+        verifiedToken = jwtHelpers.verifyToken(
+            token,
+            config.refresh_token_secret as Secret
+        );
+    } catch (err) {
+        throw new AppError(httpStatus.FORBIDDEN, 'Invalid Refresh Token');
+    }
+
+    const { id } = verifiedToken;
+
+    const isUserExist = await prisma.user.findUnique({
+        where: {
+            id: id,
+            accountStatus: AccountStatus.ACTIVE
+        }
+    });
+    if (!isUserExist) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User does not exist');
+    }
+
+    const newAccessToken = jwtHelpers.createToken(
+        {
+            id: isUserExist.id,
+            email:isUserExist.email,
+            role: isUserExist.role,
+        },
+        config.access_token_secret as Secret,
+        config.access_token_expiresIn as string
+    );
+
+    return {
+        accessToken: newAccessToken,
+    };
+};
+
+
 
 // change password
 
@@ -88,6 +131,7 @@ const changePassword = async (
 
 export const AuthServices = {
     login,
-    changePassword
+    changePassword,
+    refreshToken
 
 }

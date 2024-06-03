@@ -3,6 +3,8 @@ import isUserExistById from "../../utils/isUserExistById";
 import prisma from "../../utils/prisma";
 import { TUpdateUser, TUser } from "./user.interface";
 import bcrypt from 'bcrypt';
+import { TPaginationOptions } from "../../interface/pagination";
+import calculatePagination from "../../utils/calculatePagination";
 
 // register user
 const createUserInToDb = async (payload: TUser) => {
@@ -132,7 +134,7 @@ const updateUserProfileInToDb = async (payload: Partial<TUpdateUser>, userId: st
             age: payload?.age,
             location: payload?.location,
             profilePhoto: payload?.profilePhoto,
-            profileDescription:payload?.profileDescription
+            profileDescription: payload?.profileDescription
         },
         select: {
             bio: true,
@@ -150,37 +152,48 @@ const updateUserProfileInToDb = async (payload: Partial<TUpdateUser>, userId: st
 }
 
 
-const getAllUser=async()=>{
-const result=await prisma.user.findMany({
-   
-    include:{
-        profile:true
-    }
-});
-return result;
+const getAllUser = async (options: TPaginationOptions) => {
+    const { limit, skip, page } = calculatePagination(options);
+
+    const result = await prisma.user.findMany({
+        skip: skip,
+        take: limit,
+        include: {
+            profile: true
+        }
+    });
+    const total = await prisma.user.count({})
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result
+    };
 }
 
-const updateUserAccountStatus=async(id:string,payload:{accountStatus:AccountStatus})=>{
-const result=await prisma.user.update({
-     where:{
-        id,
-     },
-     data:{
-        accountStatus:payload?.accountStatus
-     }
-});
-return result;
+const updateUserAccountStatus = async (id: string, payload: { accountStatus: AccountStatus }) => {
+    const result = await prisma.user.update({
+        where: {
+            id,
+        },
+        data: {
+            accountStatus: payload?.accountStatus
+        }
+    });
+    return result;
 }
-const updateUserRoleStatus=async(id:string,payload:{role:'USER' | 'ADMIN'})=>{
-const result=await prisma.user.update({
-     where:{
-        id,
-     },
-     data:{
-        role:payload?.role
-     }
-});
-return result;
+const updateUserRoleStatus = async (id: string, payload: { role: 'USER' | 'ADMIN' }) => {
+    const result = await prisma.user.update({
+        where: {
+            id,
+        },
+        data: {
+            role: payload?.role
+        }
+    });
+    return result;
 }
 
 

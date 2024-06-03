@@ -12,8 +12,9 @@ router.post('/trips',auth(UserRole.USER,UserRole.ADMIN),validateRequest(TripVali
 
 // Get Paginated and Filtered Trips
 router.get('/trips',TripControllers.getAllTrips)
-// Get Trip by id
+// Get Trip by id for user and admin 
 router.get('/trip/:tripId',auth(UserRole.ADMIN,UserRole.USER),TripControllers.getTripById)
+router.get('/get-trip/:tripId',TripControllers.getOpenTripById)
 // Get  Trips by user
 router.get('/user/trips',auth(UserRole.USER,UserRole.ADMIN),TripControllers.getTripByUser)
 // deleted  Trips by admin

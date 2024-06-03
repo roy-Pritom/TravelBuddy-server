@@ -41,7 +41,7 @@ const getAllTripsFromDb = async (params: TTripFilterRequest, options: TPaginatio
     }
 
     // Filtering logic excluding searchTerm from filterData
-    const { searchTerm, minBudget, maxBudget, ...filterData } = params;
+    const { searchTerm, minBudget, maxBudget,startDate,endDate, ...filterData } = params;
 
     // Filters
     if (Object.keys(filterData).length > 0) {
@@ -64,6 +64,17 @@ const getAllTripsFromDb = async (params: TTripFilterRequest, options: TPaginatio
             },
         });
     }
+
+        // Date range filter
+        if (startDate || endDate) {
+            andConditions.push({
+                AND: [
+                    startDate ? { startDate: { gte: startDate } } : {},
+                    endDate ? { endDate: { lte: endDate } } : {},
+                ],
+            });
+        }
+    
     // check user deleted or not
     andConditions.push({ isDeleted: false })
 
@@ -102,14 +113,42 @@ const getAllTripsFromDb = async (params: TTripFilterRequest, options: TPaginatio
 };
 
 
-const getTripByUser = async (id: string) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getTripByUser = async (id: string,params:any,options: TPaginationOptions) => {
+    const { limit, skip, page } = calculatePagination(options);
+    const andConditions: Prisma.TripWhereInput[] = [];
+    const searchAbleFields = ["destination"];
+    // Search functionality
+    if (params.searchTerm) {
+        andConditions.push({
+            OR: searchAbleFields.map(field => ({
+                [field]: {
+                    contains: params.searchTerm,
+                    mode: "insensitive"
+                }
+            }))
+        });
+    }
+
+    andConditions.push({ userId: id,isDeleted:false })
+    const searchInputs: Prisma.TripWhereInput = { AND: andConditions };
+
     const result = await prisma.trip.findMany({
-        where: {
-            userId: id,
-            isDeleted: false
-        }
+        where: searchInputs,
+        skip: skip,
+        take: limit,
     })
-    return result;
+    const total = await prisma.trip.count({
+        where: searchInputs
+    })
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result
+    };
 }
 
 
@@ -145,6 +184,16 @@ const getTripById = async (id: string) => {
                     profile:true
                 }
             }
+        }
+    })
+
+    return result;
+}
+const getOpenTripById = async (id: string) => {
+    const result = await prisma.trip.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
         }
     })
 
@@ -197,6 +246,7 @@ export const TripServices = {
     updateTrip,
     getTripById,
     softDeleteTrip,
-    getDeletedTrips
+    getDeletedTrips,
+    getOpenTripById
 
 }
