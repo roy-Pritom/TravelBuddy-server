@@ -27,6 +27,8 @@ exports.TripServices = void 0;
 const calculatePagination_1 = __importDefault(require("../../utils/calculatePagination"));
 const isUserExistById_1 = __importDefault(require("../../utils/isUserExistById"));
 const prisma_1 = __importDefault(require("../../utils/prisma"));
+const AppError_1 = __importDefault(require("../../errors/AppError"));
+const http_status_1 = __importDefault(require("http-status"));
 // create trip
 const createTripInToDb = (payload, id) => __awaiter(void 0, void 0, void 0, function* () {
     // console.log(payload);
@@ -54,7 +56,7 @@ const getAllTripsFromDb = (params, options) => __awaiter(void 0, void 0, void 0,
         });
     }
     // Filtering logic excluding searchTerm from filterData
-    const { searchTerm, minBudget, maxBudget } = params, filterData = __rest(params, ["searchTerm", "minBudget", "maxBudget"]);
+    const { searchTerm, minBudget, maxBudget, startDate, endDate } = params, filterData = __rest(params, ["searchTerm", "minBudget", "maxBudget", "startDate", "endDate"]);
     // Filters
     if (Object.keys(filterData).length > 0) {
         andConditions.push({
@@ -75,9 +77,27 @@ const getAllTripsFromDb = (params, options) => __awaiter(void 0, void 0, void 0,
             },
         });
     }
+    // Date range filter
+    if (startDate || endDate) {
+        andConditions.push({
+            AND: [
+                startDate ? { startDate: { gte: startDate } } : {},
+                endDate ? { endDate: { lte: endDate } } : {},
+            ],
+        });
+    }
+    // check user deleted or not
+    andConditions.push({ isDeleted: false });
     const searchInputs = { AND: andConditions };
     const result = yield prisma_1.default.trip.findMany({
         where: searchInputs,
+        include: {
+            user: {
+                include: {
+                    profile: true
+                }
+            }
+        },
         skip: skip,
         take: limit,
         orderBy: {
@@ -96,7 +116,122 @@ const getAllTripsFromDb = (params, options) => __awaiter(void 0, void 0, void 0,
         data: result
     };
 });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getTripByUser = (id, params, options) => __awaiter(void 0, void 0, void 0, function* () {
+    const { limit, skip, page } = (0, calculatePagination_1.default)(options);
+    const andConditions = [];
+    const searchAbleFields = ["destination"];
+    // Search functionality
+    if (params.searchTerm) {
+        andConditions.push({
+            OR: searchAbleFields.map(field => ({
+                [field]: {
+                    contains: params.searchTerm,
+                    mode: "insensitive"
+                }
+            }))
+        });
+    }
+    andConditions.push({ userId: id, isDeleted: false });
+    const searchInputs = { AND: andConditions };
+    const result = yield prisma_1.default.trip.findMany({
+        where: searchInputs,
+        skip: skip,
+        take: limit,
+    });
+    const total = yield prisma_1.default.trip.count({
+        where: searchInputs
+    });
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result
+    };
+});
+// update trip
+const updateTrip = (payload, id) => __awaiter(void 0, void 0, void 0, function* () {
+    yield prisma_1.default.trip.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
+        }
+    });
+    const result = yield prisma_1.default.trip.update({
+        where: {
+            id,
+            isDeleted: false
+        },
+        data: payload
+    });
+    return result;
+});
+// get trip by Id
+const getTripById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.trip.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
+        },
+        include: {
+            user: {
+                include: {
+                    profile: true
+                }
+            }
+        }
+    });
+    return result;
+});
+const getOpenTripById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.trip.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
+        }
+    });
+    return result;
+});
+// delete trip soft delete
+const softDeleteTrip = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const trip = yield prisma_1.default.trip.findUnique({
+        where: {
+            id
+        },
+    });
+    if (!trip) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Trip does not exist!");
+    }
+    if ((trip === null || trip === void 0 ? void 0 : trip.isDeleted) === true) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Trip already deleted!");
+    }
+    const result = yield prisma_1.default.trip.update({
+        where: {
+            id
+        },
+        data: {
+            isDeleted: true
+        }
+    });
+    return result;
+});
+const getDeletedTrips = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.trip.findMany({
+        where: {
+            isDeleted: true
+        }
+    });
+    return result;
+});
 exports.TripServices = {
     createTripInToDb,
-    getAllTripsFromDb
+    getAllTripsFromDb,
+    getTripByUser,
+    updateTrip,
+    getTripById,
+    softDeleteTrip,
+    getDeletedTrips,
+    getOpenTripById
 };

@@ -18,7 +18,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const catchAsync_1 = require("../utils/catchAsync");
 const config_1 = __importDefault(require("../config"));
 const AppError_1 = __importDefault(require("../errors/AppError"));
-const auth = () => {
+const auth = (...requiredRoles) => {
     return (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const token = req.headers.authorization;
         // console.log(token);
@@ -30,6 +30,10 @@ const auth = () => {
         let decoded;
         try {
             decoded = jsonwebtoken_1.default.verify(token, config_1.default.access_token_secret);
+            // console.log(decoded);
+            if (!requiredRoles.length && !requiredRoles.includes(decoded.role)) {
+                throw new AppError_1.default(http_status_1.default.FORBIDDEN, "Forbidden");
+            }
         }
         catch (err) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "Unauthorized Access");

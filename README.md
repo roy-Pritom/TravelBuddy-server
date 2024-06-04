@@ -132,4 +132,4 @@ Before you run locally, ensure that you must have the following requirements:
 13. **Live link(vercel):**
 
    
-Live link: https://assignment-8-server-gamma.vercel.app
+Live link:https://assignment-8-server-gamma.vercel.app

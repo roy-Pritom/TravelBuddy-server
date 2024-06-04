@@ -17,6 +17,7 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const user_service_1 = require("./user.service");
 const sendResponse_1 = require("../../utils/sendResponse");
 const http_status_1 = __importDefault(require("http-status"));
+const pick_1 = require("../../utils/pick");
 // register user
 const createUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_service_1.UserServices.createUserInToDb(req.body);
@@ -24,6 +25,16 @@ const createUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, 
         statusCode: http_status_1.default.CREATED,
         success: true,
         message: "User registered successfully",
+        data: result
+    });
+}));
+// Create Admin
+const createAdmin = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.createAdminInToDb(req.body);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_1.default.CREATED,
+        success: true,
+        message: "Admin created successfully",
         data: result
     });
 }));
@@ -38,10 +49,22 @@ const getUserProfile = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void
         data: result
     });
 }));
+// Get All User 
+const getAllUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const options = (0, pick_1.pick)(req.query, ['page', 'limit']);
+    const result = yield user_service_1.UserServices.getAllUser(options);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Users  retrieved successfully",
+        meta: result.meta,
+        data: result.data
+    });
+}));
 // Update User Profile
 const updateUserProfile = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
-    console.log(req.body);
+    // console.log(req.body);
     const result = yield user_service_1.UserServices.updateUserProfileInToDb(req.body, id);
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: http_status_1.default.OK,
@@ -50,8 +73,34 @@ const updateUserProfile = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(v
         data: result
     });
 }));
+// Update Account Status
+const updateUserAccountStatus = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield user_service_1.UserServices.updateUserAccountStatus(id, req.body);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Account status updated successfully",
+        data: result
+    });
+}));
+// Update role Status
+const updateUserRoleStatus = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield user_service_1.UserServices.updateUserRoleStatus(id, req.body);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Role updated successfully",
+        data: result
+    });
+}));
 exports.UserControllers = {
     createUser,
+    createAdmin,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    getAllUser,
+    updateUserAccountStatus,
+    updateUserRoleStatus
 };

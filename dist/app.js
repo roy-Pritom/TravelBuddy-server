@@ -12,7 +12,7 @@ const auth_routes_1 = require("./app/modules/auth/auth.routes");
 const trip_routes_1 = require("./app/modules/trip/trip.routes");
 const travel_routes_1 = require("./app/modules/travel/travel.routes");
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({ origin: "https://assignment-9-client-site.vercel.app", credentials: true }));
 // parser
 app.use(express_1.default.json());
 app.get('/', (req, res) => {

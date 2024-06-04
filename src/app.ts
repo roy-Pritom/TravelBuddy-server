@@ -8,7 +8,7 @@ import { TripRoutes } from './app/modules/trip/trip.routes';
 import { TravelRoutes } from './app/modules/travel/travel.routes';
 const app:Application=express();
 
-app.use(cors({origin:"http://localhost:3000",credentials:true}));
+app.use(cors({origin:"https://assignment-9-client-site.vercel.app",credentials:true}));
 // parser
 app.use(express.json());
 

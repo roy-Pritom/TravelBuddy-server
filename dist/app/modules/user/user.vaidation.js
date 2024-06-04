@@ -11,6 +11,15 @@ const crateUserValidationSchema = zod_1.z.object({
         name: zod_1.z.string(),
         email: zod_1.z.string().email(),
         password: zod_1.z.string().min(5),
+        // role:z.string(['USER','ADMIN']),
+        profile: profileSchema
+    })
+});
+const crateAdminValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        name: zod_1.z.string(),
+        email: zod_1.z.string().email(),
+        password: zod_1.z.string().min(5),
         profile: profileSchema
     })
 });
@@ -24,5 +33,6 @@ const updateUserProfileValidationSchema = zod_1.z.object({
 });
 exports.userValidationSchemas = {
     crateUserValidationSchema,
+    crateAdminValidationSchema,
     updateUserProfileValidationSchema,
 };

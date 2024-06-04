@@ -52,8 +52,43 @@ const responseToBuddyRequest = (0, catchAsync_1.catchAsync)((req, res) => __awai
         data: result
     });
 }));
+// get request history
+const getTravelBuddyRequestsByUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.user;
+    const result = yield travel_service_1.TravelServices.getTravelBuddyRequestsByUser(id);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Travel buddy request fetch successfully",
+        data: result
+    });
+}));
+// getAllTravelRequests
+const getAllTravelRequests = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield travel_service_1.TravelServices.getAllTravelRequests();
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Travel buddy requests fetch successfully",
+        data: result
+    });
+}));
+// getReceiveTravelBuddyRequestsByUser
+const getReceiveTravelBuddyRequestsByUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.user;
+    const result = yield travel_service_1.TravelServices.getReceiveTravelBuddyRequestsByUser(id);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Receive Travel buddy requests fetch successfully",
+        data: result
+    });
+}));
 exports.TravelControllers = {
     sendTravelBuddyRequest,
     getTravelBuddiesByTripId,
-    responseToBuddyRequest
+    responseToBuddyRequest,
+    getTravelBuddyRequestsByUser,
+    getAllTravelRequests,
+    getReceiveTravelBuddyRequestsByUser
 };

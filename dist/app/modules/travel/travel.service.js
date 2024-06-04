@@ -53,6 +53,35 @@ const getTravelBuddiesByTripId = (tripId) => __awaiter(void 0, void 0, void 0, f
     // const userData=await isUserExistById(userId)
     return result;
 });
+// Get travel request by user
+const getTravelBuddyRequestsByUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.travelBuddyRequest.findMany({
+        where: {
+            senderId: id
+        },
+        include: {
+            trip: true
+        }
+    });
+    return result;
+});
+// Get receive travel request by user
+const getReceiveTravelBuddyRequestsByUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.travelBuddyRequest.findMany({
+        where: {
+            userId: id
+        },
+        include: {
+            trip: true,
+            sender: {
+                include: {
+                    profile: true
+                }
+            }
+        }
+    });
+    return result;
+});
 //  Respond to Travel Buddy Request
 const responseToBuddyRequest = (payload, buddyId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     // check user is exist or not
@@ -80,8 +109,15 @@ const responseToBuddyRequest = (payload, buddyId, userId) => __awaiter(void 0, v
     });
     return updatedRequests;
 });
+const getAllTravelRequests = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.travelBuddyRequest.findMany();
+    return result;
+});
 exports.TravelServices = {
     sendTravelBuddyRequestInToDb,
     getTravelBuddiesByTripId,
-    responseToBuddyRequest
+    responseToBuddyRequest,
+    getTravelBuddyRequestsByUser,
+    getAllTravelRequests,
+    getReceiveTravelBuddyRequestsByUser
 };
